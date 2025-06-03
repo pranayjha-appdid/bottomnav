@@ -5,25 +5,26 @@ import '../views/subcategory_page.dart';
 import '../controller/category_controller.dart';
 import '../main.dart';
 
-class BottomNavController extends GetxController {
+class BottomNavController extends GetxController implements GetxService {
   var currentIndex = 0.obs;
   var categoryLabel = "Groceries".obs;
 
   void changeTab(int index) {
-    if (index == 1 && currentIndex.value == 1) {
-      final categoryCtrl = Get.find<CategoryController>();
+    if (index == 1) {
+      if (currentIndex.value != 1) {
+        currentIndex.value = 1;
+        return;
+      }
 
-      categoryNavigatorKey.currentState?.pushAndRemoveUntil(
-        getCustomRoute(
-          child: SubcategoryPage(
-            mainCategory: categoryCtrl.selectedMainCategory.value,
-          ),
-        ),
-        (route) => false,
-      );
+      final canPop = categoryNavigatorKey.currentState?.canPop() ?? false;
+
+      if (!canPop) {
+        return;
+      }
+    } else {
+      // Any tab other than category
+      currentIndex.value = index;
     }
-
-    currentIndex.value = index;
   }
 
   void updateCategoryLabel(String newLabel) {
@@ -33,8 +34,8 @@ class BottomNavController extends GetxController {
     categoryCtrl.updateMainCategory(newLabel);
 
     categoryNavigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => SubcategoryPage(
+      getCustomRoute(
+        child: SubcategoryPage(
           mainCategory: newLabel,
         ),
       ),
