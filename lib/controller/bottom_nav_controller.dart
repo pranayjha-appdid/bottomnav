@@ -6,29 +6,35 @@ import '../controller/category_controller.dart';
 import '../main.dart';
 
 class BottomNavController extends GetxController implements GetxService {
-  var currentIndex = 0.obs;
-  var categoryLabel = "Groceries".obs;
+  int currentIndex = 0;
+  String categoryLabel = "Groceries";
+  bool _shouldResetCategory = false;
 
   void changeTab(int index) {
     if (index == 1) {
-      if (currentIndex.value != 1) {
-        currentIndex.value = 1;
-        return;
+      final categoryCtrl = Get.find<CategoryController>();
+      if (_shouldResetCategory || currentIndex != 1) {
+        categoryNavigatorKey.currentState?.pushAndRemoveUntil(
+          getCustomRoute(
+            child: SubcategoryPage(
+              mainCategory: categoryCtrl.selectedMainCategory,
+            ),
+          ),
+          (route) => false,
+        );
+        _shouldResetCategory = false;
       }
-
-      final canPop = categoryNavigatorKey.currentState?.canPop() ?? false;
-
-      if (!canPop) {
-        return;
-      }
+      currentIndex = 1;
     } else {
-      // Any tab other than category
-      currentIndex.value = index;
+      _shouldResetCategory = true;
+      currentIndex = index;
     }
+
+    update();
   }
 
   void updateCategoryLabel(String newLabel) {
-    categoryLabel.value = newLabel;
+    categoryLabel = newLabel;
 
     final categoryCtrl = Get.find<CategoryController>();
     categoryCtrl.updateMainCategory(newLabel);
@@ -42,6 +48,7 @@ class BottomNavController extends GetxController implements GetxService {
       (route) => false,
     );
 
-    currentIndex.value = 1;
+    currentIndex = 1;
+    update(); // Notify UI
   }
 }

@@ -1,8 +1,6 @@
 // pages/product_list_page.dart
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:testappbottom/services/route_helper.dart';
 import '../main.dart';
 import 'product_detail_page.dart';
@@ -25,20 +23,20 @@ class _ProductListPageState extends State<ProductListPage> {
   void initState() {
     super.initState();
     fetchProducts();
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-    //     fetchProducts();
-    //   }
-    // });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        fetchProducts();
+      }
+    });
     log("Product List Page", name: "Product List Page");
   }
 
   void fetchProducts() async {
     if (isLoading) return;
     isLoading = true;
-    await Future.delayed(Duration(seconds: 1)); // Simulate network
+    await Future.delayed(Duration(seconds: 1));
     List<String> newProducts = List.generate(
-        10, (i) => "${widget.subCategory} Item ${(page - 1) * 10 + i + 1}");
+        25, (i) => "${widget.subCategory} Item ${(page - 1) * 10 + i + 1}");
     setState(() {
       products.addAll(newProducts);
       page++;

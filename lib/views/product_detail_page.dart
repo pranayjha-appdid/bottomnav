@@ -2,6 +2,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:testappbottom/main.dart';
+import 'package:testappbottom/services/route_helper.dart';
+
+import 'caart_page.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productName;
@@ -24,8 +28,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.productName)),
       body: Center(
-        child: Text("Details of ${widget.productName}",
-            style: TextStyle(fontSize: 20)),
+        child: Column(
+          children: [
+            Text("Details of ${widget.productName}",
+                style: TextStyle(fontSize: 20)),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(navigatorKey.currentState!.context, getCustomRoute(child: CaartPage()));
+                },
+                child: Text("Cart Button"))
+          ],
+        ),
       ),
     );
   }
